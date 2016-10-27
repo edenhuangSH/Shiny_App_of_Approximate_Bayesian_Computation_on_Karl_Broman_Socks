@@ -43,7 +43,8 @@ ui = fluidPage(
 server = function(input, output) {
 
     sock_sim = reactive({
-        n_samp = 100000
+        set.seed(1)
+        n_samp = 1000
         replicate(n_samp, {
             # generating a sample of the parameters from the priors
             prior_mean = input$prior_mean
@@ -77,11 +78,29 @@ server = function(input, output) {
     post_samp = reactive({
         post = sock_sim()
         n_pick = input$n_pick
-        post = post[ , post["unique",] == n_pick & post["n_pairs", ] == 0]
+        post = post[ , post["unique",] == n_pick]
     })
 
     output$distPlot = renderPlot({
-        post = post_samp()
+        post  = post_samp()
+        socks = data.frame(n = post['n_socks',])
+        ggplot(socks, aes(x = n)) +
+            geom_density() +
+            theme(rect = element_rect(fill='#F0F0F0', colour='#F0F0F0'),
+                  text = element_text(face='bold'),
+                  panel.grid.major = element_line(color='gray80', size=0.6),
+                  panel.grid.minor = element_blank(),
+                  panel.background = element_rect(fill='#F0F0F0'),
+                  axis.text =  element_text(size=13),
+                  axis.title = element_text(size=13),
+                  plot.title = element_text(size=20),
+                  axis.ticks = element_line(color='gray80'),
+                  legend.position="none"
+            ) +
+            labs(y = 'Density',
+                 x = 'Number of Socks',
+                 title = 'Posterior Distribution of Socks')
+
     })
 }
 
