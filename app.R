@@ -44,17 +44,21 @@ server = function(input, output) {
 
     sock_sim = reactive({
         set.seed(1)
-        n_samp = 1000
+        n_samp = 2000
         replicate(n_samp, {
             # generating a sample of the parameters from the priors
             prior_mean = input$prior_mean
             prior_sd   = input$prior_sd
             n_pick     = input$n_pick
-            frac_pair  = input$frac_pair
+            mu_pair    = input$frac_pair
+            sig_pair   = (0.1)^2
+
             prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)
+            a = ((1 - mu_pair) / (sig_pair^2) - 1/mu_pair) * (mu_pair)
+            b = a * (1/mu_pair - 1)
 
             n_socks    = rnbinom(1, mu = prior_mean, size = prior_size)
-            frac_pair  = rbeta(1, shape1 = 15, shape2 = 2)
+            frac_pair  = rbeta(1, a, b)
             n_pairs    = round(floor(n_socks / 2) * frac_pair)
             n_odd      = n_socks - n_pairs * 2
 
