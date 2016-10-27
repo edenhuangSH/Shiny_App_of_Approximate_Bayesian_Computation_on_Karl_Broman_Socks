@@ -32,9 +32,13 @@ ui = fluidPage(
                         value = 11)
         ),
 
-        # Show a plot of the generated distribution
         mainPanel(
-            plotOutput("distPlot")
+            tabsetPanel(type = 'tabs',
+                tabPanel('Description', htmlOutput('descript')),
+                tabPanel('Prior Plot', plotOutput('prior_plot')),
+                tabPanel('Posterior Plot', plotOutput('post_plot'))
+
+            )
         )
     )
 )
@@ -89,7 +93,27 @@ server = function(input, output) {
     })
 
     # plot density of the number of socks
-    output$distPlot = renderPlot({
+    output$prior_plot = renderPlot({
+        ggplot(socks, aes(x = n)) +
+            geom_density() +
+            theme(rect = element_rect(fill='#F0F0F0', colour='#F0F0F0'),
+                  text = element_text(face='bold'),
+                  panel.grid.major = element_line(color='gray80', size=0.6),
+                  panel.grid.minor = element_blank(),
+                  panel.background = element_rect(fill='#F0F0F0'),
+                  axis.text =  element_text(size=13),
+                  axis.title = element_text(size=13),
+                  plot.title = element_text(size=20),
+                  axis.ticks = element_line(color='gray80'),
+                  legend.position="none" ) +
+            labs(y = 'Density',
+                 x = 'Number of Socks',
+                 title = 'Prior Distribution of Socks')
+
+    })
+
+    # plot density of the number of socks
+    output$post_plot = renderPlot({
         post  = post_samp()
         socks = data.frame(n = post['n_socks',])
         ggplot(socks, aes(x = n)) +
@@ -107,6 +131,40 @@ server = function(input, output) {
             labs(y = 'Density',
                  x = 'Number of Socks',
                  title = 'Posterior Distribution of Socks')
+
+    })
+
+    output$descript <- renderUI({
+        HTML('<br><br>
+             <b>Approximate Bayesian Computing</b><br><br>
+
+             A computational method of estimating the posterior of a
+             distribution when the likelihood cannot easily be derived. From
+             a generative model, samples are simulated, but only the samples
+             which conform to the observed data are accepted. The posterior
+             parameters are estimated from the accepted sample parameters.
+             More information about ABC can be found in this
+             <a href=https://en.wikipedia.org/wiki/Approximate_Bayesian_computation>
+             Wikipedia</a> article. <br><br>
+
+             <b>Karl Broman\'s Socks</b><br><br>
+
+             The statistician Karl Broman tweeted that of the first 11 socks picked from his dryer are
+             unique. Can we estimate the number of total socks in Broman\'s
+             dryer? A solution adapted from Rasmus Baath uses ABC. Play
+             around with the prior parameters and see how the number of socks
+             change. <br><br>
+
+             <b>Prior Parameters</b><br><br>
+             The prior estimate of the number socks is modeled with a
+             Negative Binomial distribtion. Prior mean and
+             Prior sample size control the shape of the negative binomial
+             distribution. Of course socks often go missing. The fraction of
+             socks that are paired is modeled with a Beta function. Fraction
+             of socks controls the shape of the Beta. Finally you can pick
+             how many unique socks you see from the dryer.'
+            )
+
 
     })
 }
