@@ -149,9 +149,10 @@ server = function(input, output) {
 
              <b>Karl Broman\'s Socks</b><br><br>
 
-             The statistician Karl Broman tweeted that of the first 11 socks picked from his dryer are
+             The statistician <a href=https://twitter.com/kwbroman/status/523221976001679360>Karl Broman</a> tweeted that of the first 11 socks picked from his dryer are
              unique. Can we estimate the number of total socks in Broman\'s
-             dryer? A solution adapted from Rasmus Baath uses ABC. Play
+             dryer? A solution adapted from <a href=http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman>Rasmus Baath</a>.
+             uses ABC. Play
              around with the prior parameters and see how the number of socks
              change. <br><br>
 
