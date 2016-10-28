@@ -17,13 +17,13 @@ ui = fluidPage(
                         value = 30),
             sliderInput('prior_sd',
                         'Prior Std Deviation of Socks',
-                        min = 1,
+                        min = 10,
                         max = 30,
                         value = 15),
             sliderInput('frac_pair',
                         'Prior Fraction of Paired Socks',
                         min = 0,
-                        max = 1,
+                        max = 0.95,
                         value = 0.8),
             sliderInput('sig_pair',
                         'Prior Std Deviation of Paired Socks',
@@ -132,7 +132,7 @@ server = function(input, output) {
         prior_mean = input$prior_mean
         prior_sd   = input$prior_sd
         prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)
-        range = seq(1,80,1)
+        range = seq(1,100,1)
 
         binom = dnbinom(range, mu = prior_mean, size = prior_size)
         ggplot(data.frame(x = range, y = binom), aes(x = x, y = y)) +
@@ -146,14 +146,17 @@ server = function(input, output) {
     # plot posterior density of the number of socks
     output$post_plot = renderPlot({
         post  = post_samp()
-        socks = data.frame(n = post['n_socks',])
-        ggplot(socks, aes(x = n)) +
-            geom_density() +
-            theme_bw() +
-            labs(y = 'Density',
-                 x = 'Number of Socks',
-                 title = 'Posterior Distribution of Socks')
-
+        if (length(post['n_socks',]) < 2) {
+            plot.new()
+        } else {
+            socks = data.frame(n = post['n_socks',])
+            ggplot(socks, aes(x = n)) +
+                geom_density() +
+                theme_bw() +
+                labs(y = 'Density',
+                     x = 'Number of Socks',
+                     title = 'Posterior Distribution of Socks')
+        }
     })
 
     # show summary statistics for posterior
