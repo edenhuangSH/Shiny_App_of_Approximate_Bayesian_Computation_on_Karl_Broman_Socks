@@ -34,7 +34,11 @@ ui = fluidPage(
 
         mainPanel(
             tabsetPanel(type = 'tabs',
-                tabPanel('Description', htmlOutput('descript')),
+                tabPanel('Description', htmlOutput('descript'),
+                         actionButton('show_button', 'Show Socks'),
+                         conditionalPanel('input.show_button > 0',
+                                          HTML('<br>'),
+                                          verbatimTextOutput('answer'))),
                 tabPanel('Prior Plot', plotOutput('prior_plot')),
                 tabPanel('Posterior Plot', plotOutput('post_plot'))
 
@@ -92,27 +96,12 @@ server = function(input, output) {
         post = post[ , post["unique",] == n_pick]
     })
 
-    # plot density of the number of socks
+    # plot prior distributions
     output$prior_plot = renderPlot({
-        ggplot(socks, aes(x = n)) +
-            geom_density() +
-            theme(rect = element_rect(fill='#F0F0F0', colour='#F0F0F0'),
-                  text = element_text(face='bold'),
-                  panel.grid.major = element_line(color='gray80', size=0.6),
-                  panel.grid.minor = element_blank(),
-                  panel.background = element_rect(fill='#F0F0F0'),
-                  axis.text =  element_text(size=13),
-                  axis.title = element_text(size=13),
-                  plot.title = element_text(size=20),
-                  axis.ticks = element_line(color='gray80'),
-                  legend.position="none" ) +
-            labs(y = 'Density',
-                 x = 'Number of Socks',
-                 title = 'Prior Distribution of Socks')
 
     })
 
-    # plot density of the number of socks
+    # plot posterior density of the number of socks
     output$post_plot = renderPlot({
         post  = post_samp()
         socks = data.frame(n = post['n_socks',])
@@ -134,7 +123,7 @@ server = function(input, output) {
 
     })
 
-    output$descript <- renderUI({
+    output$descript = renderUI({
         HTML('<br><br>
              <b>Approximate Bayesian Computing</b><br><br>
 
@@ -163,11 +152,17 @@ server = function(input, output) {
              distribution. Of course socks often go missing. The fraction of
              socks that are paired is modeled with a Beta function. Fraction
              of socks controls the shape of the Beta. Finally you can pick
-             how many unique socks you see from the dryer.'
+             how many unique socks you see from the dryer. <br><br>
+
+             <b>Answer</b><br><br>
+             Once you are satisified click the button to show how many socks
+             are actually in Karl Broman\'s laundry <br><br>'
             )
-
-
     })
+
+    output$answer = renderText(
+        '23 pairs and 3 upaired for a total of 45 socks.'
+    )
 }
 
 # Run the application
