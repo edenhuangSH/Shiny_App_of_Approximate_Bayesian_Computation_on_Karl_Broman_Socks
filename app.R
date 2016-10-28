@@ -41,8 +41,11 @@ ui = fluidPage(
                                           HTML('<br>'),
                                           verbatimTextOutput('answer'))),
                 tabPanel('Prior Plots',
-                         plotOutput('prior_nbinom_plot'),
-                         plotOutput('prior_beta_plot')),
+                         fluidRow(
+                             splitLayout(cellWidths = c('48%', '48%'),
+                                         plotOutput('prior_nbinom_plot'),
+                                         plotOutput('prior_beta_plot'))
+                         )),
                 tabPanel('Posterior Plot',
                          plotOutput('post_plot'))
 
