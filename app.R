@@ -25,6 +25,11 @@ ui = fluidPage(
                         min = 0,
                         max = 1,
                         value = 0.8),
+            sliderInput('sig_pair',
+                        'Prior Std Deviation of Paired Socks',
+                        min = 0.05,
+                        max = 0.2,
+                        value = 0.1),
             sliderInput('n_pick',
                         'Number of Socks Picked',
                         min = 1,
@@ -48,6 +53,7 @@ ui = fluidPage(
                          )),
                 tabPanel('Posterior Plot',
                          plotOutput('post_plot'),
+                         HTML('<br><b>Summary Statistics<b>'),
                          verbatimTextOutput('summary_stat'))
 
             )
@@ -68,11 +74,11 @@ server = function(input, output) {
             prior_sd   = input$prior_sd
             n_pick     = input$n_pick
             mu_pair    = input$frac_pair
-            sig_pair   = (0.1)^2
+            sig_pair   = input$sig_pair
 
             # calculating parameter values
             prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)
-            a = ((1 - mu_pair) / (sig_pair) - 1/mu_pair) * (mu_pair)
+            a = ((1 - mu_pair) / (sig_pair^2) - 1/mu_pair) * (mu_pair)
             b = a * (1/mu_pair - 1)
 
             # generating a sample of the parameters from the priors
@@ -107,8 +113,8 @@ server = function(input, output) {
     # plot prior beta distribution
     output$prior_beta_plot = renderPlot({
         mu_pair    = input$frac_pair
-        sig_pair   = (0.1)^2
-        a = ((1 - mu_pair) / (sig_pair) - 1/mu_pair) * (mu_pair)
+        sig_pair   = input$sig_pair
+        a = ((1 - mu_pair) / (sig_pair^2) - 1/mu_pair) * (mu_pair)
         b = a * (1/mu_pair - 1)
         range = seq(0,1,0.01)
 
