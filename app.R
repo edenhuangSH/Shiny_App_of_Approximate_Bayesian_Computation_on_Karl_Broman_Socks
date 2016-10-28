@@ -118,7 +118,7 @@ server = function(input, output) {
         b = a * (1/mu_pair - 1)
         range = seq(0,1,0.01)
 
-        beta = dbeta(seq(0,1,0.01), a, b)
+        beta = dbeta(range, a, b)
         ggplot(data.frame(x = range, y = beta), aes(x = x, y = y)) +
             geom_line() +
             theme_bw() +
