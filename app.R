@@ -47,7 +47,8 @@ ui = fluidPage(
                                          plotOutput('prior_beta_plot'))
                          )),
                 tabPanel('Posterior Plot',
-                         plotOutput('post_plot'))
+                         plotOutput('post_plot'),
+                         verbatimTextOutput('summary_stat'))
 
             )
         )
@@ -98,7 +99,7 @@ server = function(input, output) {
 
     # accept samples that match the data
     post_samp = reactive({
-        post = sock_sim()
+        post  = sock_sim()
         n_pick = input$n_pick
         post = post[ , post["unique",] == n_pick]
     })
@@ -134,7 +135,6 @@ server = function(input, output) {
             labs(x = 'Total number of Socks',
                  y = 'Density',
                  title = 'Negative Binomial Prior')
-
     })
 
     # plot posterior density of the number of socks
@@ -147,6 +147,13 @@ server = function(input, output) {
             labs(y = 'Density',
                  x = 'Number of Socks',
                  title = 'Posterior Distribution of Socks')
+
+    })
+
+    # show summary statistics for posterior
+    output$summary_stat = renderPrint({
+        post = post_samp()
+        summary(post['n_socks',])
 
     })
 
