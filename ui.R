@@ -18,7 +18,7 @@ ui = fluidPage(
                   value = 30),
       sliderInput('prior_sd',
                   'Prior Std Deviation of Mean',
-                  min = 10,
+                  min = 1,
                   max = 30,
                   value = 15),
       sliderInput('frac_pair',
@@ -56,7 +56,10 @@ ui = fluidPage(
                   tabPanel('Posterior Plot',
                            plotOutput('post_plot'),
                            HTML('<br><b>Summary Statistics<b>'),
-                           verbatimTextOutput('summary_stat'))
+                           verbatimTextOutput('summary_stat'),
+                           hr(),
+                           h4("Add the Line"),
+                           actionButton("action", label = "Posterior Median"))
                   
       )
     )

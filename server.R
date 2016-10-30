@@ -3,7 +3,11 @@ suppressWarnings(library(ggplot2))
 suppressWarnings(library(parallel))
 
 # Define server logic required to simulate socks and draw a density plot
-server = function(input, output) {
+server = function(input, output, session) {
+  
+  observe({
+    updateSliderInput(session, inputId = "prior_sd", min = ceiling(max(sqrt(input$prior_mean), 2)))
+  })
   
   sock_sim = reactive({
     set.seed(1)
@@ -97,7 +101,7 @@ server = function(input, output) {
         labs(y = 'Density',
              x = 'Number of Socks',
              title = 'Posterior Distribution of Socks') +
-        geom_vline(xintercept = median(post))
+        geom_vline(xintercept = median(post), color="red")
     }
   })
   
