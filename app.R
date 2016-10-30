@@ -146,27 +146,28 @@ server = function(input, output) {
 
     # plot posterior density of the number of socks
     output$post_plot = renderPlot({
-        post  = post_samp()
-        if (length(post['n_socks',]) < 2) {
+        post  = post_samp()['n_socks',]
+        if (length(post) < 2) {
             plot.new()
         } else {
-            socks = data.frame(n = post['n_socks',])
+            socks = data.frame(n = post)
             ggplot(socks, aes(x = n)) +
                 geom_density() +
                 theme_bw() +
                 labs(y = 'Density',
                      x = 'Number of Socks',
-                     title = 'Posterior Distribution of Socks')
+                     title = 'Posterior Distribution of Socks') +
+                geom_vline(xintercept = median(post))
         }
     })
 
     # show summary statistics for posterior
     output$summary_stat = renderPrint({
-        post = post_samp()
-        if (length(post['n_socks',]) < 2) {
+        post = post_samp()['n_socks',]
+        if (length(post) < 2) {
             print('Not enough points for valid plot!')
         } else {
-            summary(post['n_socks',])
+            summary(post)
         }
     })
 
