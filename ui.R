@@ -2,7 +2,7 @@ suppressWarnings(library(shiny))
 suppressWarnings(library(ggplot2))
 suppressWarnings(library(parallel))
 
-# Define UI for application that draws a histogram
+# Define UI for application that plots the density 
 ui = fluidPage(
   
   # Application title
