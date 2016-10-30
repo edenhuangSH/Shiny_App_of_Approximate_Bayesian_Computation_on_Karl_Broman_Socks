@@ -1,5 +1,6 @@
 suppressWarnings(library(shiny))
 suppressWarnings(library(ggplot2))
+suppressWarnings(library(parallel))
 
 # Define UI for application that draws a histogram
 ui = fluidPage(
@@ -67,15 +68,15 @@ server = function(input, output) {
 
     sock_sim = reactive({
         set.seed(1)
-        n_samp = 2000
-        replicate(n_samp, {
-
-            # input parameters
-            prior_mean = input$prior_mean
-            prior_sd   = input$prior_sd
-            n_pick     = input$n_pick
-            mu_pair    = input$frac_pair
-            sig_pair   = input$sig_pair
+        n_samp = 10000
+        # input parameters
+        prior_mean = input$prior_mean
+        prior_sd   = input$prior_sd
+        n_pick     = input$n_pick
+        mu_pair    = input$frac_pair
+        sig_pair   = input$sig_pair
+        
+        do.call(cbind, mclapply(1:10, function(x) replicate(n_samp/10, {
 
             # calculating parameter values
             prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)
@@ -101,7 +102,7 @@ server = function(input, output) {
               n_pairs = n_pairs,
               n_odd   = n_odd,
               frac_pair = frac_pair)
-        })
+        }), mc.cores = 8))
     })
 
     # accept samples that match the data
