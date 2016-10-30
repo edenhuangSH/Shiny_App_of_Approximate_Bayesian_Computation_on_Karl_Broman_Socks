@@ -16,8 +16,8 @@ ui = fluidPage(
                         max = 50,
                         value = 30),
             sliderInput('prior_sd',
-                        'Prior Std Deviation of Mean',
-                        min = 10,
+                        'Prior Std Deviation of Socks',
+                        min = 1,
                         max = 30,
                         value = 15),
             sliderInput('frac_pair',
@@ -26,7 +26,7 @@ ui = fluidPage(
                         max = 0.95,
                         value = 0.8),
             sliderInput('sig_pair',
-                        'Prior Std Deviation of Fraction',
+                        'Prior Std Deviation of Paired Socks',
                         min = 0.05,
                         max = 0.2,
                         value = 0.1),
@@ -55,16 +55,21 @@ ui = fluidPage(
                 tabPanel('Posterior Plot',
                          plotOutput('post_plot'),
                          HTML('<br><b>Summary Statistics<b>'),
-                         verbatimTextOutput('summary_stat'))
-
+                         verbatimTextOutput('summary_stat'),
+                         h4("Plot the Posterior Median:"),
+                         actionButton("action", label = "Median"))
             )
         )
     )
 )
 
 # Define server logic required to simulate socks and draw a density plot
-server = function(input, output) {
-
+server = function(input, output, session) {
+    
+    observe({
+      updateSliderInput(session, inputId = "prior_sd", min = ceiling(max(2,sqrt(input$prior_mean))))
+    })
+  
     sock_sim = reactive({
         set.seed(1)
         n_samp = 2000
@@ -78,7 +83,7 @@ server = function(input, output) {
             sig_pair   = input$sig_pair
 
             # calculating parameter values
-            prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)
+            prior_size = -prior_mean^2 / (prior_mean - prior_sd^2)   # we want prior sqrt(mean) < prior sd
             a = ((1 - mu_pair) / (sig_pair^2) - 1/mu_pair) * (mu_pair)
             b = a * (1/mu_pair - 1)
 
@@ -145,21 +150,46 @@ server = function(input, output) {
     })
 
     # plot posterior density of the number of socks
+    # output$post_plot = eventReactive(renderPlot({
+    #     post  = post_samp()['n_socks',]
+    #     if (length(post) < 2) {
+    #         plot.new()
+    #     } else {
+    #         socks = data.frame(n = post)
+    #         ggplot(socks, aes(x = n)) +
+    #             geom_density() +
+    #             theme_bw() +
+    #             labs(y = 'Density',
+    #                  x = 'Number of Socks',
+    #                  title = 'Posterior Distribution of Socks') 
+    #         
+    #         if (input$action > 0){
+    #           ggplot(socks, aes(x = n)) +
+    #             geom_density() +
+    #             theme_bw() +
+    #             labs(y = 'Density',
+    #                  x = 'Number of Socks',
+    #                  title = 'Posterior Distribution of Socks')  + 
+    #             geom_vline(xintercept = median(post), color = "red", size = 1, type = "dash")
+    #         }
+    #     }
+    # })
+    
     output$post_plot = renderPlot({
-        post  = post_samp()['n_socks',]
-        if (length(post) < 2) {
-            plot.new()
-        } else {
-            socks = data.frame(n = post)
-            ggplot(socks, aes(x = n)) +
-                geom_density() +
-                theme_bw() +
-                labs(y = 'Density',
-                     x = 'Number of Socks',
-                     title = 'Posterior Distribution of Socks') +
-                geom_vline(xintercept = median(post))
-        }
+      post  = post_samp()['n_socks',]
+      if (length(post) < 2) {
+        plot.new()
+      } else {
+        socks = data.frame(n = post)
+        ggplot(socks, aes(x = n)) +
+          geom_density() +
+          theme_bw() +
+          labs(y = 'Density',
+               x = 'Number of Socks',
+               title = 'Posterior Distribution of Socks') 
+      }
     })
+    
 
     # show summary statistics for posterior
     output$summary_stat = renderPrint({
