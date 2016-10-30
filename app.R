@@ -37,6 +37,7 @@ ui = fluidPage(
                         value = 11)
         ),
 
+        # main panel with tabbed interface
         mainPanel(
             tabsetPanel(type = 'tabs',
                 tabPanel('Description',
@@ -162,8 +163,11 @@ server = function(input, output) {
     # show summary statistics for posterior
     output$summary_stat = renderPrint({
         post = post_samp()
-        summary(post['n_socks',])
-
+        if (length(post['n_socks',]) < 2) {
+            print('Not enough points for valid plot!')
+        } else {
+            summary(post['n_socks',])
+        }
     })
 
     output$descript = renderUI({
@@ -203,7 +207,7 @@ server = function(input, output) {
     })
 
     output$answer = renderText(
-        '23 pairs and 3 unpaired for a total of 45 socks.'
+        '21 pairs and 3 unpaired for a total of 45 socks.'
     )
 }
 
