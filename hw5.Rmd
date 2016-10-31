@@ -30,7 +30,7 @@ In order to turn the simulated samples sock_sim into posterior samples, we need 
 
 Then we use `renderPlot` function that renders a reactive plot suitable for assigning to the output slot. We plot a nbinom distribution for Negative Binomial Prior, plot prior beta distribution and a posterior density of the numbers of socks for Posterior Distribution of Socks.
 
-Additionally, we use `renderPrint` to create a summary table that shows the min, quntile, max, median and mean for the post data.  Note that an error message will show up if the length of posterior distribution is less than 2 due to the insufficient sample size. The action button "postoerior median" shows the line of poasterior median when clicked. The output also includes the description for our webapp using `renderUI` and answer for the socks_button using `renderText`. 
+Additionally, we use `renderPrint` to create a summary table that shows the min, quntile, max, median and mean for the post data.  Note that an error message will show up if the length of posterior distribution is less than 2 due to the insufficient sample size. We also show line of "postoerior median" on the graph. Other output includes the description for our webapp using `renderUI` and answer for the socks_button using `renderText`. 
 
 Finally, we use `shinyApp` to run the application.
 

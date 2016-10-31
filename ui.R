@@ -58,7 +58,7 @@ ui = fluidPage(
                            HTML('<br><b>Summary Statistics<b>'),
                            verbatimTextOutput('summary_stat'),
                            hr(),
-                           h4("Add the Line"),
+                           h4("Line on the Graph"),
                            actionButton("action", label = "Posterior Median"))
 
       )
