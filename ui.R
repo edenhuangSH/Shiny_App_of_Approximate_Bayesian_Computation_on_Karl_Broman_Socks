@@ -43,7 +43,7 @@ ui = fluidPage(
       tabsetPanel(type = 'tabs',
                   tabPanel('Description',
                            htmlOutput('descript'),
-                           actionButton('show_button', 'Show Answer'),
+                           actionButton('show_button', 'Show / Hide Answer'),
                            conditionalPanel('input.show_button % 2 == 1',
                                             HTML('<br>'),
                                             verbatimTextOutput('answer'))),
