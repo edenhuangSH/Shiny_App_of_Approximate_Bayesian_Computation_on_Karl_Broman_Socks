@@ -1,6 +1,8 @@
 suppressWarnings(library(shiny))
 suppressWarnings(library(ggplot2))
-suppressWarnings(library(parallel))
+suppressWarnings(library(parallel)) # package installed for Task 2
+
+num_cores = detectCores() # detect the number of cores
 
 # Define server logic required to simulate socks and draw a density plot
 server = function(input, output, session) {
@@ -9,6 +11,7 @@ server = function(input, output, session) {
     updateSliderInput(session, inputId = "prior_sd", min = ceiling(max(sqrt(input$prior_mean), 2)))
   })
   
+  # (Task 2: sock_sim is the only part that we could speed up by splitting up processing cores)
   sock_sim = reactive({
     set.seed(1)
     n_samp = 10000
@@ -19,6 +22,8 @@ server = function(input, output, session) {
     mu_pair    = input$frac_pair
     sig_pair   = input$sig_pair
     
+    
+    # for Task 2, use "mclapply to speed up the app":
     do.call(cbind, mclapply(1:10, function(x) replicate(n_samp/10, {
       
       # calculating parameter values
@@ -45,7 +50,7 @@ server = function(input, output, session) {
         n_pairs = n_pairs,
         n_odd   = n_odd,
         frac_pair = frac_pair)
-    }), mc.cores = 8))
+    }), mc.cores = num_cores))         # for Task 2, we chose the detected cores number 
   })
   
   # accept samples that match the data
@@ -129,25 +134,25 @@ server = function(input, output, session) {
       Wikipedia</a> article. <br><br>
       
       <b>Karl Broman\'s Socks</b><br>
-
-            The statistician <a href=https://twitter.com/kwbroman/status/523221976001679360>Karl Broman</a> tweeted that of the first 11 socks picked from his dryer are
-            unique. Can we estimate the number of total socks in Broman\'s
-            dryer? A solution adapted from <a href=http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman>Rasmus Baath</a>.
-            uses ABC. Play around with the prior parameters and see how the
-            distribution of socks change. <br><br>
-
-            <b>Prior Parameters</b><br>
-            The prior estimate of the number socks is modeled with a
-            Negative Binomial distribtion. Prior mean and
-            Prior sample size control the shape of the negative binomial
-            distribution. Of course socks often go missing. The fraction of
-            socks that are paired is modeled with a Beta function. Fraction
-            of socks controls the shape of the Beta. Finally you can pick
-            how many unique socks you see from the dryer. <br><br>
-
-            <b>Answer</b><br>
-            Once you are satisified, click the button to show how many socks
-            are actually in Karl Broman\'s laundry. <br><br>'
+      
+      The statistician <a href=https://twitter.com/kwbroman/status/523221976001679360>Karl Broman</a> tweeted that of the first 11 socks picked from his dryer are
+      unique. Can we estimate the number of total socks in Broman\'s
+      dryer? A solution adapted from <a href=http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman>Rasmus Baath</a>.
+      uses ABC. Play around with the prior parameters and see how the
+      distribution of socks change. <br><br>
+      
+      <b>Prior Parameters</b><br>
+      The prior estimate of the number socks is modeled with a
+      Negative Binomial distribtion. Prior mean and
+      Prior sample size control the shape of the negative binomial
+      distribution. Of course socks often go missing. The fraction of
+      socks that are paired is modeled with a Beta function. Fraction
+      of socks controls the shape of the Beta. Finally you can pick
+      how many unique socks you see from the dryer. <br><br>
+      
+      <b>Answer</b><br>
+      Once you are satisified, click the button to show how many socks
+      are actually in Karl Broman\'s laundry. <br><br>'
     )
   })
   

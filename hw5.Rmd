@@ -28,10 +28,15 @@ Then we generate a sample of the parameters from the priors. The parameters are 
 
 In order to turn the simulated samples sock_sim into posterior samples, we need to throw away those simulations that do not match the actual data. In this case remove all simulated samples in which paried socks exist.
 
-Then we use `renderPlot` function that renders a reactive plot suitable for assigning to the output slot. We plot a nbinom distribution for Negative Binomial Prior, plot prior beta distribution and a posterior density of the numbers of socks for Posterior Distribution of Socks. Additionally, we use `renderPrint` to create a summary table that shows the min, quntile, max, median and mean for the post data. The action button "postoerior median" shows the line of poasterior median when clicked. The output also includes the description for our webapp using `renderUI` and answer for the socks_button using `renderText`. 
+Then we use `renderPlot` function that renders a reactive plot suitable for assigning to the output slot. We plot a nbinom distribution for Negative Binomial Prior, plot prior beta distribution and a posterior density of the numbers of socks for Posterior Distribution of Socks.
+
+Additionally, we use `renderPrint` to create a summary table that shows the min, quntile, max, median and mean for the post data.  Note that an error message will show up if the length of posterior distribution is less than 2 due to the insufficient sample size. The action button "postoerior median" shows the line of poasterior median when clicked. The output also includes the description for our webapp using `renderUI` and answer for the socks_button using `renderText`. 
 
 Finally, we use `shinyApp` to run the application.
 
+
+
+
 ## Task 2 Writeup
 
-In this problem, we try to speed up our shiny App. After examining both server.R and ui.R, we find that the only part that we can modify is *sock_sim* since other functions and commands don't include any iterations. The way we improve the runtime of our code is making use of multiple cores. To do that, we use the *mclapply* function, which splits the sampling into 10 parts with each part sampling 1000 values and utilizes multiple cores to generate all 10 sampling parts. In our case, we choose the core number to be 8. The *mclapply* function greatly reduces our runtime, as it takes less than 1 second for the posterior density plot to appear when we make adjustments to the sidebars. Without using multiple cores, it takes a couple of seconds.
+In this problem, we try to speed up our shiny App. After examining both server.R and ui.R, we find that the only part that we can modify is *sock_sim* since other functions and commands don't include any iterations. The way we improve the runtime of our code is making use of multiple cores. To do that, we use the *mclapply* function, which splits the sampling into 10 parts with each part sampling 1000 values and utilizes multiple cores to generate all 10 sampling parts. In our case, we choose the core number to be the number of cores detected. The *mclapply* function greatly reduces our runtime, as it takes less than 1 second for the posterior density plot to appear when we make adjustments to the sidebars. Without using multiple cores, it takes a couple of seconds.
