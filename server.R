@@ -2,7 +2,12 @@ suppressWarnings(library(shiny))
 suppressWarnings(library(ggplot2))
 suppressWarnings(library(parallel)) # package installed for Task 2
 
-num_cores = detectCores() # detect the number of cores
+if (Sys.info()[['sysname']] == 'Windows') {
+    num_cores = 1
+} else {
+    num_cores = detectCores() # detect the number of cores
+}
+
 
 # Define server logic required to simulate socks and draw a density plot
 server = function(input, output, session) {
