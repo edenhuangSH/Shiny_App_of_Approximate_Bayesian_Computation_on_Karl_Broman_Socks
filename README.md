@@ -12,7 +12,7 @@ Karl Broman is a Professor of Biostatistics at UW-Madison who is a prominent R u
 
 Our first goal for this project to create a web app that will allow a user to dynamically interact with the analysis by specifying different prior(s) and or parameterizations. We will create this interactive tool using Rstudio’s Shiny package. The app allows the user to select from a range of appropriate priors. Our Shiny App includes the dynamic isualizations of the priors and posteriors based on the user’s selections as well as relevant posterior summary statistics.
 
-## Task 2 - We need speed. Speed’s what we need.
+## Task 2 - Improving the Implementation
 
 The analysis we are implementing is based on a computational method called approximate Bayesian computation (ABC) that trades complexity for computational efficiency. We also add local multithreading to achieve the best possible performance for the ABC sampler. 
 
